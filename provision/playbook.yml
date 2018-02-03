@@ -31,3 +31,9 @@
   - role: mailuser
   - role: znz.dovecot-postfix
   - role: znz.dehydrated
+  tasks:
+  - name: 'Comment out 127.0.1.1 in /etc/hosts'
+    replace:
+      path: /etc/hosts
+      regexp: '^(127\.0\.1\.1)'
+      replace: '#\1'
