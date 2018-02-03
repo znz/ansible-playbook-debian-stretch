@@ -1,0 +1,9 @@
+---
+apache2_server_admin: "webmaster@localhost"
+apache2_server_name: "localhost"
+apache2_server_alias: ~
+apache2_document_root: "/var/www/html/"
+apache2_site_conf: ""
+apache2_site_ssl_conf: ""
+apache2_ssl_certificate_file: "/var/lib/dehydrated/certs/localhost/fullchain.pem"
+apache2_ssl_certificate_key_file: "/var/lib/dehydrated/certs/localhost/privkey.pem"

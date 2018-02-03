@@ -1,0 +1,80 @@
+---
+- name: "Check privkey.pem"
+  stat:
+    path: "{{ apache2_ssl_certificate_key_file }}"
+  register: apache2_ssl_certificate_key_file_stat
+
+- name: "a2enmod headers"
+  apache2_module:
+    name: "headers"
+  notify: "Restart apache2 service"
+
+# site.conf
+- name: "Create site.conf"
+  template:
+    src: "site.conf.j2"
+    dest: "/etc/apache2/sites-available/{{ apache2_server_name }}.conf"
+    owner: "root"
+    group: "root"
+    mode: 0444
+    validate: "env DUMMY=%s /usr/sbin/apache2ctl configtest"
+  notify: "Restart apache2 service"
+- name: "a2ensite site.conf"
+  command: "a2ensite {{ apache2_server_name }}.conf"
+  args:
+    creates: "/etc/apache2/sites-enabled/{{ apache2_server_name }}.conf"
+  notify: "Restart apache2 service"
+
+# site_ssl.conf
+- name: "Create site_ssl.conf"
+  template:
+    src: "site_ssl.conf.j2"
+    dest: "/etc/apache2/sites-available/{{ apache2_server_name }}_ssl.conf"
+    owner: "root"
+    group: "root"
+    mode: 0444
+    validate: "env DUMMY=%s /usr/sbin/apache2ctl configtest"
+  notify: "Restart apache2 service"
+  when: apache2_ssl_certificate_key_file_stat.stat.exists
+- name: "a2ensite site_ssl.conf"
+  command: "a2ensite {{ apache2_server_name }}_ssl.conf"
+  args:
+    creates: "/etc/apache2/sites-enabled/{{ apache2_server_name }}_ssl.conf"
+  notify: "Restart apache2 service"
+  when: apache2_ssl_certificate_key_file_stat.stat.exists
+
+# ssl.conf
+- name: "Update ssl.conf"
+  lineinfile:
+    path: "/etc/apache2/mods-available/ssl.conf"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    insertbefore: '^</IfModule>'
+    validate: "env DUMMY=%s /usr/sbin/apache2ctl configtest"
+  notify: "Restart apache2 service"
+  with_items:
+  # modern configuration, tweak to your needs
+  - regexp: '^\s*SSLProtocol\s+'
+    line: '	SSLProtocol all -SSLv3 -TLSv1 -TLSv1.1'
+  - regexp: '^\s*SSLCipherSuite\s+'
+    line: '	SSLCipherSuite ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256'
+  - regexp: '^\s*SSLHonorCipherOrder\s+'
+    line: '	SSLHonorCipherOrder on'
+  - regexp: '^\s*SSLCompression\s+'
+    line: '	SSLCompression off'
+  - regexp: '^\s*SSLSessionTickets\s+'
+    line: '	SSLSessionTickets off'
+  # OCSP Stapling, only in httpd 2.3.3 and later
+  - regexp: '^\s*SSLUseStapling\s+'
+    line: '	SSLUseStapling on'
+  - regexp: '^\s*SSLStaplingResponderTimeout\s+'
+    line: '	SSLStaplingResponderTimeout 5'
+  - regexp: '^\s*SSLStaplingReturnResponderErrors\s+'
+    line: '	SSLStaplingReturnResponderErrors off'
+  - regexp: '^\s*SSLStaplingCache\s+'
+    line: '	SSLStaplingCache shmcb:/var/run/ocsp(128000)'
+- name: "a2enmod ssl"
+  apache2_module:
+    name: "ssl"
+  notify: "Restart apache2 service"
+  when: apache2_ssl_certificate_key_file_stat.stat.exists

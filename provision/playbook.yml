@@ -31,6 +31,7 @@
   - role: mailuser
   - role: znz.dovecot-postfix
   - role: znz.dehydrated
+  - role: apache2
   tasks:
   - name: 'Comment out 127.0.1.1 in /etc/hosts'
     replace:

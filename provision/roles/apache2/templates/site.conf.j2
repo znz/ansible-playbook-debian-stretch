@@ -1,0 +1,29 @@
+<VirtualHost *:80>
+	ServerAdmin {{ apache2_server_admin }}
+        ServerName {{ apache2_server_name }}
+{% if apache2_server_alias %}
+	ServerAlias {{ apache2_server_alias }}{% endif %}
+
+{% if apache2_ssl_certificate_key_file_stat.stat.exists %}
+	RedirectPermanent / https://{{ apache2_server_name }}/{% endif %}
+
+	DocumentRoot {{ apache2_document_root }}
+	<Directory />
+		Options FollowSymLinks
+		AllowOverride None
+	</Directory>
+	<Directory {{ apache2_document_root }}>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Require all granted
+	</Directory>
+{{ apache2_site_conf }}
+
+	ErrorLog ${APACHE_LOG_DIR}/{{ apache2_server_name }}_error.log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog ${APACHE_LOG_DIR}/{{ apache2_server_name }}_access.log combined
+</VirtualHost>
