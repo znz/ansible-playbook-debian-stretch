@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 Vagrant.configure('2') do |config|
-  config.vm.box = 'debian/stretch64'
+  config.vm.box = 'bento/debian-9'
 
   if Vagrant.has_plugin?('vagrant-cachier')
     config.cache.scope = :box
