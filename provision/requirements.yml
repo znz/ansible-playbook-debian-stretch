@@ -14,3 +14,6 @@
 - src: https://github.com/znz/ansible-role-dehydrated
   version: master
   name: znz.dehydrated
+- src: https://github.com/znz/ansible-role-chkbuild
+  version: master
+  name: znz.chkbuild

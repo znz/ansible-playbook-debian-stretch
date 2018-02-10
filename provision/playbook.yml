@@ -32,6 +32,7 @@
   - role: znz.dovecot-postfix
   - role: znz.dehydrated
   - role: apache2
+  - role: znz.chkbuild
   tasks:
   - name: 'Comment out 127.0.1.1 in /etc/hosts'
     replace:
@@ -40,3 +41,10 @@
       replace: '#\1'
   - name: 'Install logwatch'
     apt: name=logwatch
+  - name: "Install chkbuild dependencies"
+    apt:
+      name: "{{ item }}"
+    with_items:
+    - subversion
+    - autoconf
+    - bison
