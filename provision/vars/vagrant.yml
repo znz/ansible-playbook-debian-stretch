@@ -31,3 +31,11 @@ postfix_aliases:
 
 dehydrated_domains: ""
 dehydrated_contact_email: "root@example.com"
+
+chkbuild_domain: "chkbuild.127.0.0.1.xip.io"
+chkbuild_site_conf: |
+  RemoveType .gz
+  AddEncoding gzip .gz
+  <Files rss>
+  ForceType application/rss+xml
+  </Files>

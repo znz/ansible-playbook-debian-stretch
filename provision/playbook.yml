@@ -33,6 +33,15 @@
   - role: znz.dehydrated
   - role: apache2
   - role: znz.chkbuild
+  - role: apache2
+    apache2_server_name: "{{ chkbuild_domain }}"
+    apache2_server_alias: ~
+    apache2_document_root: "/home/chkbuild/public_html/"
+    apache2_site_conf: "{{ chkbuild_site_conf }}"
+    apache2_site_ssl_conf: "{{ chkbuild_site_conf }}"
+    apache2_ssl_certificate_file: "/var/lib/dehydrated/certs/{{ chkbuild_domain }}/fullchain.pem"
+    apache2_ssl_certificate_key_file: "/var/lib/dehydrated/certs/{{ chkbuild_domain }}/privkey.pem"
+
   tasks:
   - name: 'Comment out 127.0.1.1 in /etc/hosts'
     replace:
