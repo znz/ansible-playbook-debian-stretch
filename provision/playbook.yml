@@ -57,3 +57,4 @@
     - subversion
     - autoconf
     - bison
+    - build-essential
