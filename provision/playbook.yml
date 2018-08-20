@@ -35,7 +35,7 @@
   - role: znz.chkbuild
     chkbuild_timer: "OnCalendar=*-*-* 00:00:00"
     chkbuild_resource_control: |
-      CPUQuota=30%
+      CPUQuota=40%
   - role: apache2
     apache2_server_name: "{{ chkbuild_domain }}"
     apache2_server_alias: ~
