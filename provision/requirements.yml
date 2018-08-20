@@ -17,3 +17,6 @@
 - src: https://github.com/znz/ansible-role-chkbuild
   version: master
   name: znz.chkbuild
+- src: https://github.com/znz/ansible-role-fail2ban
+  version: master
+  name: znz.fail2ban
