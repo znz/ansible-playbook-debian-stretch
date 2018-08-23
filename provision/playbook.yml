@@ -24,6 +24,8 @@
       port: 22
     - comment: "SMTPS"
       port: 465
+    - comment: "whois"
+      port: 43
   - role: znz.journald
   - role: znz.sshd
   - role: znz.unattended-upgrades
