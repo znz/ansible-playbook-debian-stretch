@@ -1,0 +1,30 @@
+---
+- hosts: all
+  become: yes
+  vars_files:
+  - vars/{{ stage }}.yml
+  roles:
+  - role: znz.ufw
+    ufw_default_forward_policy: reject
+    ufw_allow_in_tcp:
+    - comment: "HTTP"
+      port: 80
+    - comment: "HTTPS"
+      port: 443
+    - comment: "SSH"
+      port: 22
+    ufw_limit_in_tcp: []
+    ufw_allow_out_tcp:
+    - comment: "HTTP"
+      port: 80
+    - comment: "SSH"
+      port: 22
+    - comment: "SMTPS"
+      port: 465
+    - comment: "whois"
+      port: 43
+  - role: znz.fail2ban
+    fail2ban_files:
+    - ufw-port-scan.conf
+    fail2ban_jail_files:
+    - local-dovecot.conf
